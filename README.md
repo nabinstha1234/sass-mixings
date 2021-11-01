@@ -702,6 +702,263 @@ div {
    white-space: nowrap;
 }
  ```
+## 20. Clearfix
+``` 
+
+@mixin clearfix() {
+    &:before,
+    &:after {
+        content: "";
+        display: table;
+    }
+    &:after {
+        clear: both;
+    }
+}
+```
+### Usages:
+``` 
+.element {
+    @include clearfix();
+}
+
+```
+
+## 21. font size 
+``` 
+@mixin font-size($size: 12, $base: 16) {
+    font-size: $size + px;
+    font-size: ($size / $base) * 1rem;
+}
+
+```
+### Usages:
+``` 
+.element {
+    @include font-size(16);
+}
+```
+
+## 22. Box Sizing
+``` 
+@mixin box-sizing($box-model) {
+  -webkit-box-sizing: $box-model; // Safari <= 5
+     -moz-box-sizing: $box-model; // Firefox <= 19
+          box-sizing: $box-model;
+}
+
+```
+### Usages:
+
+``` 
+*,
+*:after,
+*:before {
+    @include box-sizing(border-box);
+}
+
+```
+
+## 23. Border Radius
+``` 
+@mixin border-radius($radius) {
+  -webkit-border-radius: $radius;
+  border-radius: $radius;
+  background-clip: padding-box;  /* stops bg color from leaking outside the border: */
+}
+```
+
+### Usages
+``` 
+.element {
+    /* For even border-radius */
+    @include border-radius(20px);
+
+    /* For different border-radius values */
+    @include border-radius(20px, 10px, 5px, 25px);
+}
+```
+
+## 23. Opacity
+
+```
+@mixin opacity($opacity) {
+  opacity: $opacity;
+  $opacity-ie: $opacity * 100;
+  filter: alpha(opacity=$opacity-ie); //IE8
+}
+
+```
+### Usages:
+
+``` 
+.element {
+    @include opacity(0.5);
+    /* or */
+    @include opacity(50%);
+}
+```
+
+## 24. Line Height
+``` 
+@mixin line-height($height: 12, $base: 16){
+    line-height: $height + px;
+    line-height: ($height / $base) * 1rem;
+}
+
+```
+### Usages:
+``` 
+.element {
+    @include line-height(24);
+}
+
+```
+
+## 25. Box
+```
+@mixin box($width, $height: $width) {
+  width: $width;
+  height: $height;
+}
+
+/* ===== Usage ===== */
+div {
+  // You can pass width && height
+  @include box(200px, 300px);
+  /* or just pass width and the height
+     will default to the width value */
+  @include box(200px);
+}
+```
+
+## 25. Flexbox Toolkit
+
+``` 
+@mixin flex-column {
+  display: flex;
+  flex-direction: column;
+}
+
+@mixin flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@mixin flex-center-column {
+  @include flex-center;
+  flex-direction: column;
+}
+
+@mixin flex-center-vert {
+  display: flex;
+  align-items: center;
+}
+
+@mixin flex-center-horiz {
+  display: flex;
+  justify-content: center;
+}
+
+/* ===== Usage ===== */
+.vertical-centered-element {
+  @include flex-center-vert;
+}
+
+.horizontally-centered-element {
+  flex-direction: column;
+  @include flex-center-vert;
+}
+
+```
+
+## 26. Cover Background
+
+``` 
+@mixin cover-background {
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
+}
+
+/* ===== Usage ===== */
+div {
+  background-image: url("cute-doggo.png");
+  @include cover-background;
+}
+
+```
+
+## 27. background transition
+
+``` 
+@mixin skew-background-transition($initial, $hover, $inverted: false) {
+  background: linear-gradient(
+    90deg,
+    $hover 0%,
+    $hover 50%,
+    $initial 50%,
+    $initial 100%
+  );
+  background-repeat: no-repeat;
+  background-size: 200% 100%;
+
+  background-position: right bottom;
+  @if $inverted {
+    background-position: left bottom;
+  }
+  transition: background-position 0.25s ease-out;
+
+  &:hover {
+    background-position: left bottom;
+    @if $inverted {
+      background-position: right bottom;
+    }
+  }
+}
+
+```
+
+## 28. Fluid Typography
+We use this mixin for responsive typography because we can avoid unnecessary media queries. It saves you a lot of time and minifies your CSS code.
+
+You don’t have to worry about line-height because we’ve extended the mixin, and it automatically calculates your line-height.
+
+``` 
+@mixin fluid-font($min-width, $max-width, $min-font-size, $max-font-size) {
+  $unit1: unit($min-width);
+  $unit2: unit($max-width);
+  $unit3: unit($min-font-size);
+  $unit4: unit($max-font-size);
+  @if $unit1 == $unit2 and $unit1 == $unit3 and $unit1 == $unit4 {
+    & {
+      font-size: $min-font-size;
+      line-height: $min-font-size * 1.618;
+      @media screen and (min-width: $min-width) {
+        font-size: calc(
+          #{$min-font-size} + #{strip-unit($max-font-size - $min-font-size)} *
+            ((100vw - #{$min-width}) / #{strip-unit($max-width - $min-width)})
+        );
+        line-height: calc(
+          #{$min-font-size} + #{strip-unit($max-font-size - $min-font-size)} *
+            1.618 *
+            ((100vw - #{$min-width}) / #{strip-unit($max-width - $min-width)})
+        );
+      }
+      @media screen and (min-width: $max-width) {
+        font-size: $max-font-size;
+        line-height: $max-font-size * 1.618;
+      }
+    }
+  }
+}
+
+// Usages
+@include fluid-font(320px, 1024px, 22px, 55px);
+
+```
+
 
 
 
